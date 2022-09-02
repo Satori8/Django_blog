@@ -1,0 +1,83 @@
+{% extends 'blog/base/base.html' %}
+{% load static %}
+{% block content %}
+    <div>
+
+        <ul class="feed">
+            {% for p in posts %}
+                <li>
+                    <!--
+                    <div class="post">
+                        <div class="post-header">
+                            <p class="first">Category: {{ p.cat }}</p>
+                            <p class="last">Published: by {{ p.author.first_name }}
+                                ({{ p.author.username }}) {{ p.author.last_name }}, {{ p.time_create|date:"d M Y H:i:s" }}</p>
+
+                        </div>
+                        <h2 class="post-title">{{ p.title }}</h2>
+
+                        {% if p.photo %}
+                            <img class="post-img-thumb rounded-1 float-start" src="{{ p.photo.url }}" alt="photo">
+                        {% endif %}
+                        <div>
+
+                            <div class="post-content-short">
+                                {{ p.content|striptags|truncatewords_html:100 }}
+                            </div>
+                            <div class="clear"></div>
+                            <div>
+                                {% if user.is_authenticated %}
+                                    {% if user.id == p.author.id or user.is_staff %}
+                                        <div class="btn-group-sm">
+                                            <a class="btn btn-secondary" href="{% url 'edit_post' p.slug %}">edit</a>
+                                            <a class="btn btn-danger"
+                                               href="{% url 'delete_post_confirm' p.slug %}">delete</a>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+                                <a class="btn btn-primary read-btn" href="{{ p.get_absolute_url }}">Read</a>
+                            </div>
+                            <div class="clear"></div>
+                        </div>
+                    </div>
+
+                    -->
+
+                    <div class="card mb-3">
+                        <div class="row g-0">
+                            <div class="col-md-4">
+                                <img src="{{ p.photo.url }}" class="img-fluid rounded-start post-img-thumb" alt="...">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ p.title }}</h5>
+                                    <p class="card-text post-content-short"> {{ p.content|striptags|truncatewords_html:100 }}</p>
+                                    <p class="card-text"><small class="text-muted float-end">
+                                        by {{ p.author.username }}, {{ p.time_create|date:"d M Y H:i:s" }}
+                                    </small></p>
+                                    <div class="position-absolute bottom-0 end-0">
+
+                                        {% if user.is_authenticated %}
+                                            {% if user.id == p.author.id or user.is_staff %}
+                                                <div class="btn-group-sm">
+                                                    <a class="btn btn-secondary" href="{% url 'edit_post' p.slug %}">edit</a>
+                                                    <a class="btn btn-danger"
+                                                       href="{% url 'delete_post_confirm' p.slug %}">delete</a>
+                                                </div>
+                                            {% endif %}
+                                        {% endif %}
+
+                                        <a class="btn btn-primary read-btn" href="{{ p.get_absolute_url }}">Read</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <br>
+            {% endfor %}
+        </ul>
+    </div>
+
+
+{% endblock content %}

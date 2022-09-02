@@ -1,0 +1,18 @@
+{% extends 'blog/base/base.html' %}
+{% load static %}
+{% block content %}
+
+    {% if post.photo %}
+        <p><a href="{{ post.photo.url }}"><img class="post-img" src="{{ post.photo.url }}"></a></p>
+    {% endif %}
+
+    <div class="post-content">
+        {{ post.content|safe }}
+    </div>
+
+    <div class="post-header">
+        <p class="first">Category: {{ post.cat }}</p>
+        <p class="last">Published by {{ post.author.first_name }}
+            ({{ post.author.username }}) {{ post.author.last_name }} at {{ post.time_create|date:"d M Y H:i" }} (last updated: {{ post.time_update|date:"d M Y H:i" }})</p>
+    </div>
+{% endblock content %}

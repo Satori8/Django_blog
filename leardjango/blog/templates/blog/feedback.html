@@ -1,0 +1,45 @@
+{% extends 'blog/base/base.html' %}
+{$ load static $}
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form errors">{{ form.non_field_errors }}</div>
+        {% for f in form %}
+            <p class="form-field"><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}:</label>{{ f }}</p>
+            <div class="form-error">{{ f.errors }}</div>
+        {% endfor %}
+        <button type="submit" class="form-button">Send</button>
+        <a href="#void" class="captcha-refresh"> </a>
+        <script>
+            const captcha = document.querySelector('img.captcha')
+
+            function headers(options) {
+                options = options || {}
+                options.headers = options.headers || {}
+                options.headers['X-Requested-With'] = 'XMLHttpRequest'
+                return options
+            }
+            anchor = document.querySelector('a.captcha-refresh')
+            anchor.addEventListener('click', ({target}) => {
+                const url = `${window.location.origin}/captcha/refresh/`
+                let formEl = target.parentElement
+
+                while (formEl && formEl.tagName.toLowerCase() !== 'form') {
+                    formEl = formEl.parentElement
+                }
+
+                fetch(url, headers())
+                    .then(res => res.json())
+                    .then(json => {
+                        formEl.querySelector('input[name="captcha_0"]').value = json.key
+                        captcha.setAttribute('src', json.image_url)
+                    })
+                    .catch(console.error)
+
+                return false
+            })
+            captcha.after(anchor)
+
+        </script>
+    </form>
+{% endblock %}

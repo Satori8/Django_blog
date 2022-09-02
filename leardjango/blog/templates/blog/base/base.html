@@ -1,0 +1,78 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+    <link type="text/css" rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <script src="{% static 'jquery/jquery-3.6.1.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <link type="text/css" rel="stylesheet" href="/static/blog/css/style.css">
+</head>
+<body>
+<div class="wrapper">
+    {% include 'blog/base/menu.html' %}
+    <h3 class="align-self-center m-2">{{ title }}</h3>
+    <div class="container-fluid px-4">
+        {% for message in messages %}
+            <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                {{ message | safe }}
+            </div>
+        {% endfor %}
+
+        {% block content %}
+        {% endblock content %}
+
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="pagination">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item">
+                        {% if page_obj.has_previous %}
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{{ add_get }}"
+                               aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        {% else %}
+                            <span class="page-link disabled" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </span>
+                        {% endif %}
+                    </li>
+
+                    {% for p in paginator.page_range %}
+                        {% if page_obj.number == p %}
+                            <li class="page-item"><span class="page-link active">{{ p }}</span>
+                            </li>
+                        {% elif p >= page_obj.number|add:-2 and p <= page_obj.number|add:2 %}
+
+                            <li class="page-item"><a class="page-link" href="?page={{ p }}{{ add_get }}">{{ p }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+
+                    <li class="page-item">
+                        {% if page_obj.has_next %}
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{{ add_get }}"
+                               aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        {% else %}
+                            <span class="page-link disabled" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </span>
+                        {% endif %}
+                    </li>
+                </ul>
+            </nav>
+        {% endif %}
+
+    </div>
+    {% include 'blog/base/footer.html' %}
+</div>
+
+</body>
+</html>

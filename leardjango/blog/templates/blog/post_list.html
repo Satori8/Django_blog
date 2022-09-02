@@ -1,0 +1,79 @@
+<div>
+    <!-- Modal -->
+    <div class="modal fade" id="confirm-delete-modal" tabindex="-1" aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog  modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Confirm delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete post?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a type="button" id="confirm-delete" class="btn btn-danger" href="">Yes</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const modal = document.getElementById('confirm-delete-modal')
+        modal.addEventListener('show.bs.modal', event => {
+            const button = event.relatedTarget
+            const post_href = button.getAttribute('data-href')
+            const post_title = button.parentNode.parentNode.parentNode.querySelector('.card-title').textContent;
+            modal.querySelector('.modal-body').textContent = `Are you sure you want to delete \"${post_title}\" post?`
+            modal.querySelector('#confirm-delete').href = post_href
+            console.log(post_href)
+        })
+    </script>
+
+    <ul class="feed">
+        {% for p in posts %}
+            <li>
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <small class="text-muted float-start">
+                            Category: {{ p.cat }}
+                        </small>
+                        <small class="text-muted float-end">
+                            posted by {{ p.author.username }}, {{ p.time_create|date:"d M Y H:i:s" }}
+                        </small>
+                    </div>
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <img src="{{ p.photo.url }}" class="img-fluid post-img-thumb" alt="...">
+                        </div>
+                        <div class="col-md-8 d-flex flex-column">
+                            <div class="card-body">
+                                <h5 class="card-title">{{ p.title }}</h5>
+                                <p class="card-text post-content-short"> {{ p.content|striptags|truncatewords_html:100 }}</p>
+                            </div>
+                            <div class="mt-auto align-self-end m-2">
+
+                                {% if user.is_authenticated %}
+                                    {% if user.id == p.author.id or user.is_staff %}
+                                        <div class="btn-group">
+                                            <a class="btn btn-secondary"
+                                               href="{% url 'edit_post' p.slug %}">Edit</a>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                                    data-href="{% url 'delete_post' p.slug %}"
+                                                    data-bs-target="#confirm-delete-modal">Delete
+                                            </button>
+                                        </div>
+                                    {% endif %}
+                                {% endif %}
+
+                                <a class="btn btn-primary read-btn" href="{{ p.get_absolute_url }}">Read post</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </li>
+        {% endfor %}
+    </ul>
+</div>

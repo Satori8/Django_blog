@@ -1,0 +1,13 @@
+{%extends 'blog/base/base.html' %}
+{%block content%}
+<form method="post">
+    {%csrf_token%}
+    <div class="form errors">{{form.non_field_errors}}</div>
+    {%for f in form%}
+    <p class="form-field"><label class="form-label" for="{{f.id_for_label}}">{{f.label}}:</label>{{f}}</p>
+    <div class="form-error">{{f.errors}}</div>
+    {%endfor%}
+
+    <button type="submit" class="form-button">Sign In</button>
+</form>
+{%endblock%}

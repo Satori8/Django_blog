@@ -1,0 +1,71 @@
+{% load blog_tags %}
+<header>
+    <div class="menu">
+        <ul>
+            <img src="/static/blog/images/logo.png" class="logo">
+
+            <div class="menu-left">
+                {% for m in menu %}
+                    {% url m.url_name as url %}
+                    {% if request.path == url %}
+                        <li class="menu-item-selected"><a href="{% url m.url_name %}">{{ m.title }}</a></li>
+                    {% else %}
+                        <li class="menu-item"><a href="{% url m.url_name %}">{{ m.title }}</a></li>
+                    {% endif %}
+
+                {% endfor %}
+            </div>
+
+            <div class="menu-right">
+                <li>
+                    <script>
+                        function empty() {
+                            var x;
+                            x = document.getElementsByName("search_request")[0].value;
+                            if (x == "") {
+                                return false;
+                            }
+                        }
+                    </script>
+                    <form method="get" action="{% url 'search_results' %}" class="d-flex flex-row">
+
+                        <input class="form-control me-2" type="search" name="search_request" placeholder="Search"
+                               aria-label="Search">
+                        <button type="submit" class="btn btn-outline-secondary" onclick="return empty()">search</button>
+                    </form>
+
+                </li>
+                {% if request.user.is_authenticated %}
+                    <li class="menu-item"><a href="{% url 'profile' %}">{{ user.username }}</a></li>
+                    <li class="menu-item"><a href="{% url 'logout' %}">Sign Out</a></li>
+                {% else %}
+                    {% url 'signup' as reg_url %}
+                    {% url 'signin' as log_url %}
+                    {% if request.path == reg_url %}
+                        <li class="menu-item-selected"><a href="{{ reg_url }}">Sign Up</a></li>
+                    {% else %}
+                        <li class="menu-item"><a href="{{ reg_url }}">Sign Up</a></li>
+                    {% endif %}
+                    {% if request.path == log_url %}
+                        <li class="menu-item-selected"><a href="{{ log_url }}">Sign In</a></li>
+                    {% else %}
+                        <li class="menu-item"><a href="{{ log_url }}">Sign In</a></li>
+                    {% endif %}
+
+                {% endif %}
+            </div>
+        </ul>
+    </div>
+    <br>
+    <div class="categories">
+        <ul>
+            {% if cat_selected == 0 %}
+                <li class="selected">All categories</li>
+            {% else %}
+                <li><a href="{% url 'home' %}">All categories</a></li>
+            {% endif %}
+
+            {% include 'blog/base/list_categories.html' %}
+        </ul>
+    </div>
+</header>
