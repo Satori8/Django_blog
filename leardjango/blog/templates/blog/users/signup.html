@@ -1,12 +1,43 @@
-{% extends 'blog/base/base.html' %}
+{% load widget_tweaks %}
+{% load blog_tags %}
 
-{% block content%}
-<form method="post">
-    {%csrf_token%}
-    {%for f in form%}
-    <p class="form-field"><label class="form-label" for="{{f.id_for_label}}">{{f.label}}:</label>{{f}}</p>
-    <div class="form-error">{{f.errors}}</div>
-    {%endfor%}
-    <button type="submit" class="form-button">Sing Up</button>
+
+<form method="post" action="">
+    {% csrf_token %}
+
+    <div class="modal-header bg-primary">
+        <h3 class="modal-title text-white-50"><i class="fa fa-user-plus"></i>&nbsp;&nbsp;Sign Up</h3>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+
+    <div class="modal-body">
+        {% for error in form.non_field_errors %}
+            <div class="text-danger">{{ error }}</div>
+        {% endfor %}
+
+        {% for field in form %}
+            <div class="mb-3">
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa {{ icons|getitem:field.name }}"></i></span>
+                    {% if field.errors %}
+                        {% render_field field class+="form-control is-invalid" placeholder=field.label %}
+                    {% elif form.is_bound %}
+                        {% render_field field class+="form-control is-valid" placeholder=field.label %}
+                    {% else %}
+                        {% render_field field class+="form-control" placeholder=field.label %}
+                    {% endif %}
+                </div>
+                {% if field.errors %}
+                    {% for error in field.errors %}
+                        <p class="text-danger">{{ error }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary w-100 mt-4">Sign Up</button>
+    </div>
+
+
 </form>
-{% endblock %}
+

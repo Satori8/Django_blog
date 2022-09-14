@@ -1,0 +1,24 @@
+{% extends 'blog/base/base.html' %}
+{% load avatar_tags %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container align-self-center w-75">
+        <!-- avatar -->
+        <div class="align-self-center align-items-center d-flex flex-column">
+            <div class="align-self-center mb-3">
+                {% avatar profile 200 class="rounded-circle border border-secondary" %}
+            </div>
+        </div>
+
+        {% for field in form %}
+            <div class="card mb-3">
+            <div class="card-body">
+                <label class="form-label mb-0 me-2 fw-semibold text-secondary">{{ field.label }}:</label>
+                {{ field.value }}
+
+            </div>
+            </div>
+        {% endfor %}
+
+    </div>
+{% endblock %}

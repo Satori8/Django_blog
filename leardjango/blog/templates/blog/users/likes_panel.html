@@ -1,0 +1,25 @@
+{% load blog_tags %}
+
+
+{% define 'text-secondary' as liked_class %}
+{% define 'text-secondary' as disliked_class %}
+
+{% if user.is_authenticated %}
+    {% call_method post 'is_reactioned' user 'like' as liked %}
+    {% call_method post 'is_reactioned' user 'dislike' as disliked %}
+    {% if liked %}
+        {% define 'text-primary' as liked_class %}
+    {% endif %}
+    {% if disliked %}
+        {% define 'text-primary' as disliked_class %}
+    {% endif %}
+{% endif %}
+
+{% call_method post 'get_reaction_count' 'like' as likes %}
+{% call_method post 'get_reaction_count' 'dislike' as dislikes %}
+<div class="align-self-center">
+    <a href="{% url 'reaction' post.slug %}?act=like" class="mb-2 text-decoration-none me-2 {{ liked_class }}"><i
+            class="fa fa-thumbs-up"></i> {{ likes }}</a>
+    <a href="{% url 'reaction' post.slug %}?act=dislike" class="mb-2 text-decoration-none me-2 {{ disliked_class }}"><i
+            class="fa fa-thumbs-down"></i> {{ dislikes }}</a>
+</div>

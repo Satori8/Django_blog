@@ -1,24 +1,22 @@
 {% load widget_tweaks %}
 {% load blog_tags %}
 
-<form method="post" action="/profile/change_password">
-    {% csrf_token %}
 
-    <div class="modal-header bg-warning">
-        <h3 class="modal-title text-black-50"><i class="fa fa-lock"></i>&nbsp;&nbsp;Change password</h3>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-
-
-    <div class="modal-body">
-
+<div class="modal-header bg-primary">
+    <h3 class="modal-title text-black-50"><i class="fa fa-plus"></i>&nbsp;&nbsp;Add category</h3>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </form>
+</div>
+<div class="modal-body">
+    <form method="post">
+        {% csrf_token %}
         <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
             {% for error in form.non_field_errors %}
                 {{ error }}
             {% endfor %}
         </div>
 
-        {% for field in form %}
+        {% for field in forms.add %}
             <div class="input-group mb-3 has-validation">
                 {% if field.errors %}
                     {% render_field field class="form-control is-invalid" placeholder=field.label %}
@@ -37,8 +35,10 @@
 
         <!-- Hidden input field for custom redirection after successful login -->
         <input type="hidden" name="next" value="/">
-
-        <button type="submit" class="btn btn-warning w-100 mt-4">Sign In</button>
-    </div>
-
-</form>
+        <button type="submit" class="btn btn-primary w-100 mt-4">Add</button>
+    </form>
+    <form>
+        {% csrf_token %}
+        {% forms.delete.as_p %}
+    </form>
+</div>

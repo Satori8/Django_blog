@@ -6,8 +6,10 @@
     <meta charset="UTF-8">
     <title>{{ title }}</title>
     <link type="text/css" rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link type="text/css" rel="stylesheet" href="{% static 'fontawesome/css/all.css' %}">
     <script src="{% static 'jquery/jquery-3.6.1.min.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/jquery.bootstrap.modal.forms.min.js' %}"></script>
     <link type="text/css" rel="stylesheet" href="/static/blog/css/style.css">
 </head>
 <body>
@@ -16,13 +18,32 @@
     <h3 class="align-self-center m-2">{{ title }}</h3>
     <div class="container-fluid px-4">
         {% for message in messages %}
-            <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="alert {{ message.tags }} alert-dismissible shadow fade show" role="alert" id="msg">
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 {{ message | safe }}
             </div>
         {% endfor %}
+        <script>
+            setTimeout(function () {
+                if ($('#msg').length > 0) {
+                    $('#msg').alert('close');
+                }
+            }, 5000)
+        </script>
+
+        {% if not request.user.is_authenticated %}
+            <div class="modal fade" tabindex="-1" role="dialog" id="signup-modal">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content"></div>
+                </div>
+            </div>
+
+            <div class="modal fade" tabindex="-1" role="dialog" id="signin-modal">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content"></div>
+                </div>
+            </div>
+        {% endif %}
 
         {% block content %}
         {% endblock content %}

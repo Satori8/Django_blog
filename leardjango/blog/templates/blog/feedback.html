@@ -1,45 +1,77 @@
 {% extends 'blog/base/base.html' %}
-{$ load static $}
+{% load widget_tweaks %}
+{% load blog_tags %}
+{% load static %}
 {% block content %}
-    <form method="post">
-        {% csrf_token %}
-        <div class="form errors">{{ form.non_field_errors }}</div>
-        {% for f in form %}
-            <p class="form-field"><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}:</label>{{ f }}</p>
-            <div class="form-error">{{ f.errors }}</div>
-        {% endfor %}
-        <button type="submit" class="form-button">Send</button>
-        <a href="#void" class="captcha-refresh"> </a>
-        <script>
-            const captcha = document.querySelector('img.captcha')
+    <div class="container align-self-center w-75">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form errors">{{ form.non_field_errors }}</div>
+            {% for field in form %}
+                <div class="input-group">
+                    {% if icons|getitem:field.name %}
+                        <span class="input-group-text"><i class="fa {{ icons|getitem:field.name }}"></i></span>
+                    {% endif %}
 
-            function headers(options) {
-                options = options || {}
-                options.headers = options.headers || {}
-                options.headers['X-Requested-With'] = 'XMLHttpRequest'
-                return options
-            }
-            anchor = document.querySelector('a.captcha-refresh')
-            anchor.addEventListener('click', ({target}) => {
-                const url = `${window.location.origin}/captcha/refresh/`
-                let formEl = target.parentElement
+                    {% render_field field class="form-control" placeholder=field.label %}
+                </div>
+                <div class="form-error mb-3">{{ field.errors }}</div>
+            {% endfor %}
 
-                while (formEl && formEl.tagName.toLowerCase() !== 'form') {
-                    formEl = formEl.parentElement
+            <button type="submit" class="btn btn-success float-end mt-2 mb-4"><i class="fa fa-paper-plane"></i> Send
+            </button>
+            <a class="btn btn-secondary float-end mb-4 mt-2 mx-2" href="{{ request.META.HTTP_REFERER }}"><i
+                    class="fa fa-xmark"></i> Cancel</a>
+
+            <script>
+                function wrap_to_col(element, classes) {
+                    let wrapper = document.createElement('div');
+                    wrapper.setAttribute("class", classes)
+
+                    let parent = element.parentNode;
+
+                    // set the wrapper as child (instead of the element)
+                    parent.replaceChild(wrapper, element);
+                    // set element as child of wrapper
+                    wrapper.appendChild(element);
                 }
 
-                fetch(url, headers())
-                    .then(res => res.json())
-                    .then(json => {
-                        formEl.querySelector('input[name="captcha_0"]').value = json.key
-                        captcha.setAttribute('src', json.image_url)
-                    })
-                    .catch(console.error)
+                const captcha = document.querySelector('img.captcha')
+                {#wrap_to_col(captcha, "col-auto d-flex p-0")#}
+                const cap_field = document.querySelector('#id_captcha_1')
+                const parent2 = cap_field.parentElement;
+                const refresh_btn = document.createElement("p");
+                refresh_btn.innerHTML = "<a href='#void' id='refresh' class='form-control' style='flex-grow: 0; width: auto;'><i class='fa fa-rotate-right'></i></a>"
+                parent2.insertBefore(refresh_btn, cap_field)
+                const refresh = document.querySelector('#refresh')
+                cap_field.setAttribute("class", "form-control")
+                captcha.setAttribute("class", "form-control p-0")
+                captcha.setAttribute("style", "width: auto; flex-grow: 0;")
+                {#wrap_to_col(cap_field, "col p-0")#}
 
-                return false
-            })
-            captcha.after(anchor)
+                function headers(options) {
+                    options = options || {}
+                    options.headers = options.headers || {}
+                    options.headers['X-Requested-With'] = 'XMLHttpRequest'
+                    return options
+                }
 
-        </script>
-    </form>
+                refresh.addEventListener('click', ({target}) => {
+                    const url = `${window.location.origin}/captcha/refresh/`
+
+                    fetch(url, headers())
+                        .then(res => res.json())
+                        .then(json => {
+                            document.querySelector('input[name="captcha_0"]').value = json.key
+                            captcha.setAttribute('src', json.image_url)
+                        })
+                        .catch(console.error)
+
+                    return false
+                })
+                captcha.after(refresh)
+
+            </script>
+        </form>
+    </div>
 {% endblock %}

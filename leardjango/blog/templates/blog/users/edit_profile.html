@@ -1,0 +1,94 @@
+{% extends 'blog/base/base.html' %}
+{% load avatar_tags %}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="modal fade" tabindex="-1" role="dialog" id="pwd-change-modal">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div id="modal-content"></div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="avatar-change-modal">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div id="modal-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container align-self-center w-75">
+        <!-- avatar -->
+        <div class="align-self-center align-items-center d-flex flex-column">
+
+            <div class="align-self-center mb-3">
+                {% avatar user 200 class="rounded-circle border border-secondary" %}
+            </div>
+
+            <form enctype="multipart/form-data" method="POST" action="/avatar/add/"
+                  class="d-flex flex-column align-self-center w-100">
+                {% csrf_token %}
+
+                <label class="form-label" for="id_avatar">Avatar:</label>
+                <div class="input-group mb-3">
+                    <div class="input-group col">
+                        <input type="file" name="avatar" required accept="image/*" placeholder="avatar" id="id_avatar"
+                               class="form-control">
+                        <input type="submit" value="Upload" class="form-control btn btn-outline-primary"
+                               style="flex-grow: 0;width: auto;">
+                    </div>
+                    <div class="col-auto ms-2">
+                        <input type="hidden" name="avatar-delete" id="avatar-delete" value="">
+                        <input type="submit" class="btn btn-outline-danger" value="Delete current"
+                               onclick="document.querySelector('#id_avatar').required=false;document.querySelector('#avatar-delete').value='yes'">
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+
+            {% for field in form %}
+                <div class="mb-3 has-validation">
+                    <label class="form-label me-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.errors %}
+                        {% render_field field class="form-control is-invalid" placeholder=field.label %}
+                    {% else %}
+                        {% render_field field class="form-control" placeholder=field.label %}
+                    {% endif %}
+
+                    <div class="invalid-feedback">
+                        {% for error in field.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <p class="text-center">
+                <a href="#void" id="pwd_change" class="link"><i class="fa fa-lock"></i> Change Password</a>
+            </p>
+
+            <script type="text/javascript">
+
+                $(document).ready(function () {
+                    $("#pwd_change").modalForm({
+                        formURL: "{% url 'pwd_change' %}",
+                        errorClass: ".is-invalid",
+                        modalID: "#pwd-change-modal"
+                    });
+                });
+            </script>
+            <button type="submit" class="btn btn-success float-end mb-2"><i class="fa fa-file-arrow-down"></i> Save Changes
+            </button>
+        </form>
+
+    </div>
+{% endblock %}

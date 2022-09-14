@@ -1,0 +1,13 @@
+{% if user.is_authenticated %}
+    {% if user.id == post.author.id or user.is_staff %}
+        <div class="btn-group">
+            <a class="btn btn-secondary"
+               href="{% url 'edit_post' post.slug %}"><i class="fa fa-pencil"></i> Edit</a>
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                    data-href="{% url 'delete_post' post.slug %}"
+                    data-bs-target="#confirm-delete-modal"><i
+                    class="fa fa-trash-can"></i> Delete
+            </button>
+        </div>
+    {% endif %}
+{% endif %}

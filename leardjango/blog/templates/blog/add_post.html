@@ -1,14 +1,42 @@
 {% extends 'blog/base/base.html' %}
-{%block content %}
-<form action="{%url 'add_post'%}" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-{{ form.media }}
-    <div class="form errors">{{form.non_field_errors}}</div>
-    {%for f in form%}
-    <p class="form-field"><label class="form-label" for="{{f.id_for_label}}">{{f.label}}:</label>{{f}}</p>
-    <div class="form-error">{{f.errors}}</div>
-    {%endfor%}
+{% load widget_tweaks %}
+{% block content %}
+    <div class="container w-75 align-self-center">
+        <form action="{% url 'add_post' %}" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.media }}
 
-    <button type="submit" class="form-button">Send</button>
-</form>
-{%endblock content%}
+            <div class="{% if form.non_field_errors %}invalid{% endif %} mb-2">
+                {% for error in form.non_field_errors %}
+                    {{ error }}
+                {% endfor %}
+            </div>
+
+
+            {% for field in form %}
+                <div class="mb-3 {% if form.is_bound %}has-validation{% endif %}">
+                    <label class="me-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.errors %}
+                        {% render_field field class+="form-control is-invalid" placeholder=field.label %}
+                    {% elif form.is_bound %}
+                        {% render_field field class+="form-control is-valid" placeholder=field.label %}
+                    {% else %}
+                        {% render_field field class+="form-control" placeholder=field.label %}
+                    {% endif %}
+
+                    <div class="invalid-feedback">
+                        {% for error in field.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+            <button type="submit" class="btn btn-success float-end mt-2 mb-4"><i class="fa fa-share-from-square"></i>
+                Publish
+            </button>
+            <a class="btn btn-secondary float-end mb-4 mt-2 mx-2" href="{{ request.META.HTTP_REFERER }}"><i
+                    class="fa fa-xmark"></i> Cancel</a>
+        </form>
+    </div>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% load avatar_tags %}
+
+
+<div class="modal-header bg-warning">
+    <h3 class="modal-title text-black-50"><i class="fa fa-lock"></i>&nbsp;&nbsp;Change password</h3>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+</div>
+
+
+<div class="modal-body">
+    <form enctype="multipart/form-data" method="POST" action="/avatar/add/">
+        {% csrf_token %}
+        {% avatar user 200 %}
+        <input type="file" name="avatar" accept="image/*" required="" placeholder="avatar" id="id_avatar">
+        <input type="submit" value="Upload">
+    </form>
+
+</div>

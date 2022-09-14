@@ -1,15 +1,9 @@
 {% extends 'blog/base/base.html' %}
 {% block content %}
 
-    <p>This site made as training project, based on Django with a default SQLite database.</p>
+    <p>This site made as training project, based on Django 4.0.6 with a default SQLite database and styled with Bootstrap v5.2 + Fontawesome icons.</p>
     <br>
-    <p>Additional modules used:
-    <ul>
-        <li>Django-simple-captcha - for bot check in Contact form</li>
-        <li>Django-debug-toolbar - for finding excessive SQL requests</li>
-    </ul></p>
-    <br>
-    <p>Features realised:
+    <p>Features implemented:
     <ul>
         <li>
             Categorical post display in with reduced image size and text
@@ -18,7 +12,16 @@
             Single post view with bigger image and full text
         </li>
         <li>
-            Adding post for authenticated users
+            Add / edit post for authenticated users using CKEditor
+        </li>
+        <li>
+            Like / dislike post
+        </li>
+        <li>
+            Comment post
+        </li>
+        <li>
+            Search in posts
         </li>
         <li>
             Pagination
@@ -27,9 +30,24 @@
             Authentication / Registration
         </li>
         <li>
-            Feedback form with captcha bot check
+            Profile watch and edit pages
+        </li>
+        <li>
+            User avatars
+        </li>
+        <li>
+            Feedback form with captcha check
         </li>
     </ul>
     </p>
-
+    <p>Additional modules used:
+    <ul>
+        <li>Django-simple-captcha</li>
+        <li>Django-debug-toolbar</li>
+        <li>Django-bootstrap-modal-form</li>
+        <li>Django-avatar</li>
+        <li>Django-ckeditor</li>
+        <li>Django-widget-tweaks</li>
+    </ul></p>
+    <br>
 {% endblock content %}

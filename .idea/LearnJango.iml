@@ -29,6 +29,7 @@
         <option value="$MODULE_DIR$/leardjango/blog/templates/blog" />
         <option value="$MODULE_DIR$/leardjango/blog/templates/blog/base" />
         <option value="$MODULE_DIR$/leardjango/blog/templates/blog/users" />
+        <option value="$MODULE_DIR$/leardjango/templates" />
       </list>
     </option>
   </component>

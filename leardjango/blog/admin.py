@@ -4,12 +4,11 @@ from django.contrib import admin
 from .models import *
 from django.contrib.auth.models import User
 from django import forms
-from ckeditor.widgets import CKEditorWidget
 from .models import Post
-from ckeditor_uploader.widgets import CKEditorUploadingWidget
+
 
 class PostAdminForm(forms.ModelForm):
-    content = forms.CharField(widget=CKEditorUploadingWidget())
+    content = forms.CharField()
 
     class Meta:
         model = Post
@@ -39,6 +38,12 @@ class FeedbackAdmin(admin.ModelAdmin):
     search_fields = ('name', 'email', 'content')
 
 
+class CustomUserAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(CustomUser, CustomUserAdmin)
 admin.site.register(Post, PostAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Feedback, FeedbackAdmin)
+admin.site.register(Comment)

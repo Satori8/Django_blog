@@ -1,5 +1,5 @@
 from django import template
-#from blog.models import *
+# from blog.models import *
 
 from blog.models import Category
 
@@ -21,3 +21,19 @@ def show_categories(sort=None, cat_selected=0):
     else:
         cats = Category.objects.order_by(sort)
     return {'cats': cats, 'cat_selected': cat_selected}
+
+
+@register.filter
+def getitem(item, string):
+    return item.get(string, '')
+
+
+@register.simple_tag
+def define(val=None):
+  return val
+
+
+@register.simple_tag
+def call_method(obj, method_name, *args):
+    method = getattr(obj, method_name)
+    return method(*args)

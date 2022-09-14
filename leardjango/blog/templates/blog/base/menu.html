@@ -1,71 +1,87 @@
 {% load blog_tags %}
-<header>
-    <div class="menu">
-        <ul>
-            <img src="/static/blog/images/logo.png" class="logo">
-
-            <div class="menu-left">
-                {% for m in menu %}
-                    {% url m.url_name as url %}
-                    {% if request.path == url %}
-                        <li class="menu-item-selected"><a href="{% url m.url_name %}">{{ m.title }}</a></li>
-                    {% else %}
-                        <li class="menu-item"><a href="{% url m.url_name %}">{{ m.title }}</a></li>
-                    {% endif %}
-
-                {% endfor %}
-            </div>
-
-            <div class="menu-right">
-                <li>
-                    <script>
-                        function empty() {
-                            var x;
-                            x = document.getElementsByName("search_request")[0].value;
-                            if (x == "") {
-                                return false;
-                            }
-                        }
-                    </script>
-                    <form method="get" action="{% url 'search_results' %}" class="d-flex flex-row">
-
-                        <input class="form-control me-2" type="search" name="search_request" placeholder="Search"
-                               aria-label="Search">
-                        <button type="submit" class="btn btn-outline-secondary" onclick="return empty()">search</button>
-                    </form>
-
-                </li>
-                {% if request.user.is_authenticated %}
-                    <li class="menu-item"><a href="{% url 'profile' %}">{{ user.username }}</a></li>
-                    <li class="menu-item"><a href="{% url 'logout' %}">Sign Out</a></li>
+{% load avatar_tags %}
+<header class="text-bg-dark">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start my-2 mx-3">
+        <a class="px-2 text-light" href="{% url 'home' %}"><i class="fa fa-shekel h1 mb-0 text-warning"></i></a>
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0"
+            style="font-size: 1.3rem;font-weight: 300">
+            {% for m in menu %}
+                {% url m.url_name as url %}
+                {% if request.path == url %}
+                    <li><a class="nav-link px-2 text-secondary" href="{% url m.url_name %}">{{ m.title }}</a></li>
                 {% else %}
-                    {% url 'signup' as reg_url %}
-                    {% url 'signin' as log_url %}
-                    {% if request.path == reg_url %}
-                        <li class="menu-item-selected"><a href="{{ reg_url }}">Sign Up</a></li>
-                    {% else %}
-                        <li class="menu-item"><a href="{{ reg_url }}">Sign Up</a></li>
-                    {% endif %}
-                    {% if request.path == log_url %}
-                        <li class="menu-item-selected"><a href="{{ log_url }}">Sign In</a></li>
-                    {% else %}
-                        <li class="menu-item"><a href="{{ log_url }}">Sign In</a></li>
-                    {% endif %}
-
+                    <li><a class="nav-link px-2 text-light" href="{% url m.url_name %}">{{ m.title }}</a></li>
                 {% endif %}
-            </div>
-        </ul>
-    </div>
-    <br>
-    <div class="categories">
-        <ul>
-            {% if cat_selected == 0 %}
-                <li class="selected">All categories</li>
-            {% else %}
-                <li><a href="{% url 'home' %}">All categories</a></li>
-            {% endif %}
+            {% endfor %}
 
-            {% include 'blog/base/list_categories.html' %}
+
         </ul>
+        <div class="text-end d-flex align-items-center">
+            {% if request.user.is_authenticated %}
+                <a class="ps-1 pe-3 text-light text-decoration-none" href="{% url 'edit_profile' %}">
+                    {% avatar user 38 class="rounded-circle border border-secondary" %}
+                        {{ user.username }}
+                </a>
+                <a class="btn btn-outline-danger" href="{% url 'logout' %}"><i class="fa fa-right-from-bracket"></i>
+                    Sign Out</a>
+            {% else %}
+                <button id="signup-btn" class="btn btn-outline-success me-2"><i class="fa fa-user-plus"></i> Sign up
+                </button>
+                <button id="signin-btn" class="btn btn-outline-primary"><i class="fa fa-right-to-bracket"></i> Sign In
+                </button>
+                <script type="text/javascript">
+                    $(function () {
+                        // Sign up button
+                        $("#signup-btn").modalForm({
+                            formURL: "{% url 'signup' %}",
+                            modalID: "#signup-modal",
+                            errorClass: ".is-invalid"
+                        });
+                    });
+
+                    $(document).ready(function () {
+                        $("#signin-btn").modalForm({
+                            formURL: "{% url 'signin' %}",
+                            modalID: "#signin-modal",
+                            errorClass: ".is-invalid"
+                        });
+                    });
+                </script>
+            {% endif %}
+        </div>
+    </div>
+    <hr class="my-0">
+    <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start py-2 px-3 bg-secondary bg-opacity-25">
+        <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+            {% for c in cats %}
+                {% if c.post__count > 0 %}
+                    {% if cat_selected == c.slug %}
+                        <li class="nav-link px-2 text-secondary">{{ c.name }}</li>
+                    {% else %}
+                        <li><a class="nav-link px-2 text-light" href="{{ c.get_absolute_url }}">{{ c.name }}</a>
+                        </li>
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+        <form method="get" action="{% url 'search_results' %}" class="d-flex col-12 col-lg-auto mb-3 mb-lg-0"
+              role="search">
+            <script>
+                function empty() {
+                    var x;
+                    x = document.getElementsByName("search_request")[0].value;
+                    if (x == "") {
+                        return false;
+                    }
+                }
+            </script>
+
+            <input class="form-control border-secondary text-bg-dark me-1" type="search" name="search_request"
+                   placeholder="Search"
+                   aria-label="Search">
+            <button type="submit" class="btn btn-outline-secondary" onclick="return empty()"><i
+                    class="fa fa-magnifying-glass"></i></button>
+        </form>
     </div>
 </header>

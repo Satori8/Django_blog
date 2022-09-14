@@ -1,14 +1,36 @@
 {% extends 'blog/base/base.html' %}
+{% load widget_tweaks %}
 {% block content %}
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-    {{ form.media }}
-        <div class="form errors">{{ form.non_field_errors }}</div>
-        {% for f in form %}
-            <div class="mb-3"><label class="form-label me-2" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}</div>
-            <div class="form-error">{{ f.errors }}</div>
-        {% endfor %}
+    <div class="container w-75 align-self-center">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.media }}
+            <div class="form errors">{{ form.non_field_errors }}</div>
+            {% for field in form %}
+                <div class="mb-3 {% if form.is_bound %}has-validation{% endif %}">
+                    <label class="form-label me-2" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {% if field.errors %}
+                        {% render_field field class+="form-control is-invalid" placeholder=field.label %}
+                    {% elif form.is_bound %}
+                        {% render_field field class+="form-control is-valid" placeholder=field.label %}
+                    {% else %}
+                        {% render_field field class+="form-control" placeholder=field.label %}
+                    {% endif %}
 
-        <button type="submit" class="form-button">Send</button>
-    </form>
+                    <div class="invalid-feedback">
+                        {% for error in field.errors %}
+                            <p class="error">{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endfor %}
+
+
+            <button type="submit" class="btn btn-success float-end mb-4 mt-2"><i class="fa fa-file-arrow-down"></i> Save
+                changes
+            </button>
+            <a class="btn btn-secondary float-end mb-4 mt-2 mx-2" href="{{ request.META.HTTP_REFERER }}"><i
+                    class="fa fa-xmark"></i> Cancel</a>
+        </form>
+    </div>
 {% endblock content %}

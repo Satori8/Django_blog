@@ -12,10 +12,12 @@ urlpatterns = [
     path('post/<slug:post_slug>', PostView.as_view(), name='post'),
     path('post/edit/<slug:post_slug>', EditPostView.as_view(), name='edit_post'),
     path('post/delete/<slug:post_slug>', delete_post, name='delete_post'),
+    path('post/like/<slug:post_slug>', reaction, name="reaction"),
     path('category/<slug:cat_slug>', PostCategoryView.as_view(), name='category'),
     path('registration/', RegistrationView.as_view(), name='signup'),
-    path('profile/', ProfileView.as_view(), name='profile'),
+    path('edit_profile/', EditProfileView.as_view(), name='edit_profile'),
+    path('watch_profile/<slug:profile_slug>', WatchProfileView.as_view(), name='watch_profile'),
     path('search_results/', SearchResultsView.as_view(), name='search_results'),
     path('profile/change_password', PasswordsChangeView.as_view(), name='pwd_change'),
-    path('profile/change_password_success', PasswordChangeSuccess.as_view(), name='pwd_change_success')
+
 ]

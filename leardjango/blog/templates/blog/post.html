@@ -1,18 +1,68 @@
 {% extends 'blog/base/base.html' %}
 {% load static %}
+{% load avatar_tags %}
 {% block content %}
-
+    {% load blog_tags %}
     {% if post.photo %}
-        <p><a href="{{ post.photo.url }}"><img class="post-img" src="{{ post.photo.url }}"></a></p>
+        <a href="{{ post.photo.url }}"><img class="post-img" src="{{ post.photo.url }}"></a>
     {% endif %}
 
     <div class="post-content">
         {{ post.content|safe }}
     </div>
 
-    <div class="post-header">
+    <div class="d-flex my-2 float-end">
+        <div class="float-end align-self-center me-2">
+            {% include 'blog/users/likes_panel.html' %}
+        </div>
+
+        <div class="float-end">
+            {% include 'blog/users/edit_post_panel.html' %}
+        </div>
+    </div>
+
+    <div class="post-header w-100">
         <p class="first">Category: {{ post.cat }}</p>
-        <p class="last">Published by {{ post.author.first_name }}
-            ({{ post.author.username }}) {{ post.author.last_name }} at {{ post.time_create|date:"d M Y H:i" }} (last updated: {{ post.time_update|date:"d M Y H:i" }})</p>
+        <p class="last">by <a href="{% url 'watch_profile' post.author.username %}">{{ post.author.username }}</a>
+            at {{ post.time_create|date:"d M Y H:i" }} (last
+            updated: {{ post.time_update|date:"d M Y H:i" }})
+        </p>
+    </div>
+
+    <div class="mb-2 d-flex flex-column">
+        {% if user.is_authenticated %}
+            <form method="post" class="d-flex align-items-center">
+                {% csrf_token %}
+                <input type="hidden" name="user" value={{ user.id }}>
+                <input type="hidden" name="post" value={{ post.id }}>
+                {{ form.text }}
+                <button type="submit" class="btn btn-primary my-2 float-end ms-2 text-nowrap">Send comment</button>
+            </form>
+        {% else %}
+            <span class="my-4 align-self-center">Sing In to comment...</span>
+        {% endif %}
+
+        {% if not post.comments.all %}
+            No comments yet...
+        {% else %}
+            {% for comment in post.comments.all|dictsortreversed:"time_create" %}
+                <div class="d-flex flex-row">
+                    <div style="width: 0%"></div>
+                    <div class="card mb-2 align-self-end flex-grow-1">
+                        <div class="card-header">
+                            <small class="d-flex justify-content-between">
+                            <a href="{% url 'watch_profile' comment.user %}" class="float-start text-secondary text-decoration-none">
+                            {% avatar comment.user 32 class="border border-secondary rounded-circle me-1" %}
+                                {{ comment.user }}</a>
+
+                                <span class="float-end align-self-center text-secondary">{{ comment.time_create|date:"d M Y H:i" }}</span>
+                            </small>
+                        </div>
+                        <div class="card-body">{{ comment.text }}</div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
     </div>
 {% endblock content %}
